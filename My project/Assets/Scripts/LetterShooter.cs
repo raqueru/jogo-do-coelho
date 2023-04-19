@@ -1,12 +1,15 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LetterShooter : MonoBehaviour
 {
-    public Bullet letter;
+    public GameObject letter;
     PlayerMovement player;
+    List<GameObject> bullets;
     // Start is called before the first frame update
     void Start()
     {
+        bullets = new List<GameObject>();
         player = FindObjectOfType<PlayerMovement>();
 
     }
@@ -20,12 +23,16 @@ public class LetterShooter : MonoBehaviour
         {
             Shoot(player.transform);
         }
-        Bullet[] bullets = FindObjectsOfType<Bullet>();
-        foreach (Bullet bullet in bullets)
+
+
+        for (int i = 0; i < bullets.Count; i++)
         {
-            if (bullet.transform.position.x > player.transform.position.x + 40)
+            if (bullets[i].transform.position.x > player.transform.position.x + 40)
             {
-                Destroy(bullet.gameObject);
+                Destroy(bullets[i].gameObject);
+                bullets.Remove(bullets[i]);
+
+
             }
         }
     }
@@ -33,8 +40,9 @@ public class LetterShooter : MonoBehaviour
     public void Shoot(Transform transform)
     {
         Vector3 playerPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        Rigidbody2D bullet = Instantiate(letter.body, playerPos, player.transform.rotation);
-        bullet.AddForce(new Vector2(30, 0), ForceMode2D.Impulse);
+        GameObject bullet = Instantiate(letter, playerPos, player.transform.rotation);
+        bullet.GetComponent<Rigidbody2D>().AddForce(new Vector2(30, 0), ForceMode2D.Impulse);
+        bullets.Add(bullet);
 
 
     }
